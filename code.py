@@ -50,7 +50,6 @@ for tick in cryptodict.keys():
     predict = 5
     sec = cryptodict[tick]
     merged = pd.merge(btc, sec, left_index=True, right_index=True)
-    # print(merged)
     lenstock = len(merged)-gap
     start = random.choice(range(0, lenstock))
     mvavg = []
@@ -90,6 +89,4 @@ for tick in cryptodict.keys():
     x.append(pd.merge(tempdf, tempmerged, right_index = True, left_index = True))
 
 
-
-print(tickers)
 
