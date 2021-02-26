@@ -2,6 +2,7 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 import pandas as pd
 import random
+import statistics
 
 # # btc = yf.Ticker('BUSD-USD')
 # # his = btc.history(period="MAX")
@@ -41,10 +42,13 @@ tick = yf.Ticker('BTC-USD')
 btc = tick.history(period="MAX")
 link = cryptodict["LINK-USD"]
 
-for i in cryptodict.keys():
+x = []
+y = []
+tickers = []
+for tick in cryptodict.keys():
     gap = 5
     predict = 5
-    sec = cryptodict[i]
+    sec = cryptodict[tick]
     merged = pd.merge(btc, sec, left_index=True, right_index=True)
     # print(merged)
     lenstock = len(merged)-gap
@@ -60,6 +64,8 @@ for i in cryptodict.keys():
     prspred = []
     btcpr = []
     btcpred = []
+    returnprs = []
+    returnbtc = []
     for i in range(start, start+gap):
         mean = merged['Close_x'][i:i+gap].mean()
         mvavg.append(mean)
@@ -75,12 +81,15 @@ for i in cryptodict.keys():
     tempdf = tempdf.T
     tempmerged = merged[start:start+gap]
     tempdf.index = tempmerged.index
+    for i in range(0, len(prs)):
+        returnprs.append(prspred[i]-prs[-1])
+        returnbtc.append(btcpred[i]-btcpr[-1])
+    observed=(sum(returnprs)/len(returnprs)-sum(returnbtc)/len(returnbtc))/statistics.stdev(returnprs)
+    y.append(observed)
+    tickers.append(tick)
+    x.append(pd.merge(tempdf, tempmerged, right_index = True, left_index = True))
 
-returnprs = []
-returnbtc = []
-for i in range(0, len(prs)):
-    returnprs.append(prspred[i]-prs[-1])
-    returnbtc.append(btcpred[i]-btcpr[-1])
 
-print(tempdf)
+
+print(tickers)
 
